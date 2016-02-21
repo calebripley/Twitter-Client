@@ -31,6 +31,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let vc = storyboard.instantiateInitialViewController()
             self.window?.rootViewController = vc
         }
+        
+        UINavigationBar.appearance().barTintColor = UIColor.blueColor()
+        
         return true
     }
 
