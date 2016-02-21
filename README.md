@@ -2,15 +2,15 @@
 
 **Twitter** is a basic twitter app to read and compose tweets the [Twitter API](https://apps.twitter.com/).
 
-Time spent: **X** hours spent in total
+Time spent: **8** hours spent in total
 
 ## User Stories
 
 The following **required** functionality is completed:
 
-- [ ] User can sign in using OAuth login flow
-- [ ] User can view last 20 tweets from their home timeline
-- [ ] The current signed in user will be persisted across restarts
+- [X] User can sign in using OAuth login flow
+- [X] User can view last 20 tweets from their home timeline
+- [X] The current signed in user will be persisted across restarts
 - [ ] In the home timeline, user can view tweet with the user profile picture, username, tweet text, and timestamp.
 - [ ] Retweeting and favoriting should increment the retweet and favorite count.
 
@@ -26,7 +26,7 @@ The following **additional** features are implemented:
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
-1. 
+1. Incrementing retweet and favorite counts
 2. 
 
 ## Video Walkthrough 
@@ -40,6 +40,8 @@ GIF created with [LiceCap](http://www.cockos.com/licecap/).
 ## Notes
 
 Describe any challenges encountered while building the app.
+
+I can't seem to resolve the errors in the TwitterClient.swift file. Also have yet to find someone that can assist me. 
 
 ## License
 
