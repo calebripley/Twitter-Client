@@ -53,6 +53,12 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
         return cell
     }
 
+    @IBAction func onRetweet(sender: AnyObject) {
+    }
+    
+    @IBAction func onFavorite(sender: AnyObject) {
+    }
+    
 
     /*
     // MARK: - Navigation

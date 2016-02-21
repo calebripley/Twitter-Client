@@ -9,9 +9,18 @@
 import UIKit
 import BDBOAuth1Manager
 
+let twitterConsumerKey = "V6xapbggOGgSEfS6N1HTdJCHC"
+let twitterConsumerSecret = "66PrMlrNIF9S8qREIyov9JWiWevYkNfAsinsdcFGLZpvWq9AXn"
+let twitterBaseURL = NSURL(string: "https://api.twitter.com")
+
 class TwitterClient: BDBOAuth1SessionManager {
 
-    static let sharedInstance = TwitterClient(baseURL: NSURL(string: "https://api.twitter.com")!, consumerKey: "V6xapbggOGgSEfS6N1HTdJCHC", consumerSecret: "66PrMlrNIF9S8qREIyov9JWiWevYkNfAsinsdcFGLZpvWq9AXn")
+    class var sharedInstance: TwitterClient {
+        struct Static {
+            static let instance = TwitterClient(baseURL: twitterBaseURL, consumerKey: twitterConsumerKey, consumerSecret: twitterConsumerSecret)
+        }
+        return Static.instance
+    }
     
     var loginSuccess: (() -> ())?
     var loginFailure: ((NSError) -> ())
@@ -26,7 +35,7 @@ class TwitterClient: BDBOAuth1SessionManager {
             UIApplication.sharedApplication().openURL(authURL!)
             }) { (error: NSError!) -> Void in
                 print(error.localizedDescription)
-                self.loginFailure?(error)
+                self.loginFailure(error)
         }
     }
     
@@ -75,6 +84,24 @@ class TwitterClient: BDBOAuth1SessionManager {
             }, failure: { (operation: NSURLSessionDataTask?, error: NSError) -> Void in
                 failure(error)
         })
+    }
+    
+    func retweet(tweetId: String) {
+        
+        TwitterClient.sharedInstance.POST("1.1/statuses/retweet/\(tweetId).json", parameters: nil, success: { (operation: NSURLSessionDataTask, response: AnyObject?) -> Void in
+
+            }) { (opreation: NSURLSessionDataTask?, error: NSError) -> Void in
+
+        }
+    }
+    
+    func favorite(tweetId: String) {
+        
+        TwitterClient.sharedInstance.POST("1.1/favorites/create.json?id=\(tweetId)", parameters: nil, success: { (operation: NSURLSessionDataTask, response: AnyObject?) -> Void in
+
+            }) { (opreation: NSURLSessionDataTask?, error: NSError) -> Void in
+
+        }
     }
     
 }
