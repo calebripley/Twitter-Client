@@ -29,7 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             self.window?.rootViewController = vc
         }
         
-        UINavigationBar.appearance().barTintColor = UIColor.blueColor()
+        UINavigationBar.appearance().barTintColor = UIColor(hex: 0x55A7FF, alpha: 0.5)
+        UINavigationBar.appearance().tintColor = UIColor.whiteColor()
         
         return true
     }
