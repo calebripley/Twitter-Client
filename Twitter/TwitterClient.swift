@@ -9,21 +9,12 @@
 import UIKit
 import BDBOAuth1Manager
 
-let twitterConsumerKey = "V6xapbggOGgSEfS6N1HTdJCHC"
-let twitterConsumerSecret = "66PrMlrNIF9S8qREIyov9JWiWevYkNfAsinsdcFGLZpvWq9AXn"
-let twitterBaseURL = NSURL(string: "https://api.twitter.com")
-
 class TwitterClient: BDBOAuth1SessionManager {
 
-    class var sharedInstance: TwitterClient {
-        struct Static {
-            static let instance = TwitterClient(baseURL: twitterBaseURL, consumerKey: twitterConsumerKey, consumerSecret: twitterConsumerSecret)
-        }
-        return Static.instance
-    }
+    static let sharedInstance = TwitterClient(baseURL: NSURL(string: "https://api.twitter.com")!, consumerKey: "V6xapbggOGgSEfS6N1HTdJCHC", consumerSecret: "66PrMlrNIF9S8qREIyov9JWiWevYkNfAsinsdcFGLZpvWq9AXn")
     
     var loginSuccess: (() -> ())?
-    var loginFailure: ((NSError) -> ())
+    var loginFailure: ((NSError) -> ())?
     
     func login(success: () ->(), failure: (NSError) -> ()) {
         loginSuccess = success
@@ -35,7 +26,7 @@ class TwitterClient: BDBOAuth1SessionManager {
             UIApplication.sharedApplication().openURL(authURL!)
             }) { (error: NSError!) -> Void in
                 print(error.localizedDescription)
-                self.loginFailure(error)
+                self.loginFailure!(error)
         }
     }
     
@@ -54,11 +45,11 @@ class TwitterClient: BDBOAuth1SessionManager {
                     User.currentUser = user
                     self.loginSuccess?()
                 }, failure: { (error: NSError) -> () in
-                    self.loginFailure(error)
+                    self.loginFailure!(error)
             })
             }) { (error: NSError!) -> Void in
                 print (error.localizedDescription)
-                self.loginFailure(error)
+                self.loginFailure!(error)
         }
     }
 

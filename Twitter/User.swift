@@ -52,7 +52,7 @@ class User: NSObject {
             
             if let user = user {
                 let data = try! NSJSONSerialization.dataWithJSONObject(user.dictionary!, options: [])
-                defaults.setObject(user, forKey: "currentUserData")
+                defaults.setObject(data, forKey: "currentUserData")
             } else {
                 defaults.setObject(nil, forKey: "currentUserData")
             }

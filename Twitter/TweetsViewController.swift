@@ -11,7 +11,10 @@ import AFNetworking
 
 class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    var tweets: [Tweet]!
+    var users: [User]?
+    var tweets: [Tweet]?
+    var tweet: Tweet!
+    
     @IBOutlet weak var tableView: UITableView!
 
     override func viewDidLoad() {
@@ -40,7 +43,7 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if tweets != nil {
-            return tweets.count
+            return (tweets?.count)!
         } else {
             return 0
         }
@@ -48,15 +51,20 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
-        cell.tweet = tweets[indexPath.row]
+         cell.tweet = tweets![indexPath.row]
+         cell.user = users![indexPath.row]
         
         return cell
     }
 
     @IBAction func onRetweet(sender: AnyObject) {
+        tweet.retweetCount += 1
+        print(tweet.retweetCount)
     }
     
     @IBAction func onFavorite(sender: AnyObject) {
+        tweet.favoritesCount += 1
+        print(tweet.favoritesCount)
     }
     
 
