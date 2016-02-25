@@ -11,7 +11,7 @@ import UIKit
 class User: NSObject {
     var name: NSString?
     var screenName: NSString?
-    var profileImageURL: NSURL?
+    var profileImageURL: String?
     var tagLine: NSString?
     var dictionary: NSDictionary?
     
@@ -20,12 +20,7 @@ class User: NSObject {
         
         name = dictionary["name"] as? String
         screenName = dictionary["screen_name"] as? String
-        
-        let profileUrlString = dictionary["profile_image_url"] as? String
-        if let profileUrlString = profileUrlString {
-            profileImageURL = NSURL(string: profileUrlString)
-        }
-
+        profileImageURL = dictionary["profile_image_url"] as? String
         tagLine = dictionary["description"] as? String
         
     }

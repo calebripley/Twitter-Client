@@ -11,16 +11,13 @@ import AFNetworking
 
 class TweetsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    var users: [User]?
     var tweets: [Tweet]?
-    var tweet: Tweet!
-    var user: User!
+    var tweet: Tweet?
     
     @IBOutlet weak var tableView: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         TwitterClient.sharedInstance.homeTimeline({ (tweets: [Tweet]) -> () in
             self.tweets = tweets
             self.tableView.reloadData()
@@ -54,29 +51,25 @@ class TweetsViewController: UIViewController, UITableViewDataSource, UITableView
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("TweetCell", forIndexPath: indexPath) as! TweetCell
-        let tweet = tweets![indexPath.row]
+        let tweet = self.tweets![indexPath.row]
         
-        cell.userNameLabel.text = "@" + (tweet.user!.screenName! as String)
-        cell.profileImageView.setImageWithURL(tweet.user!.profileImageURL!)
+        cell.userNameLabel.text = String(tweet.user!.name)
+        cell.tweetLabel.text = tweet.text
+        if let profileImageUrl = tweet.user?.profileImageURL {
+            cell.profileImageView.setImageWithURL(NSURL(string: profileImageUrl)!)
+        }
         
+        
+        //cell.timeStampLabel.text = String(tweet.createdAt)
         let formatter = NSDateFormatter()
         formatter.dateFormat = "EEE MMM d"
         cell.timeStampLabel.text = formatter.stringFromDate(tweet.createdAt!)
-        cell.tweetLabel.text = tweet.text
+        
+        
+        cell.favoriteCountLabel.text = String(tweet.favoriteCount)
+        cell.retweetCountLabel.text = String(tweet.retweetCount)
     
         return cell
-    }
-
-    @IBAction func onRetweet(sender: AnyObject) {
-        let indexPath = self.tableView.indexPathForSelectedRow
-        let tweet = tweets![indexPath!.row]
-        TwitterClient.sharedInstance.retweet(tweet.tweetId!)
-    }
-    
-    @IBAction func onFavorite(sender: AnyObject) {
-        let indexPath = self.tableView.indexPathForSelectedRow
-        let tweet = tweets![indexPath!.row]
-        TwitterClient.sharedInstance.favorite(tweet.tweetId!)
     }
     
 
