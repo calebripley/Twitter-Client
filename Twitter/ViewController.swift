@@ -27,7 +27,6 @@ class ViewController: UIViewController {
             }) { (error: NSError) -> () in
                 print(error.localizedDescription)
         }
-        
     }
 
 }

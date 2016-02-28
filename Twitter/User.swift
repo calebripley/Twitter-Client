@@ -9,11 +9,15 @@
 import UIKit
 
 class User: NSObject {
-    var name: NSString?
-    var screenName: NSString?
+    var name: String?
+    var screenName: String?
     var profileImageURL: String?
-    var tagLine: NSString?
+    var tagLine: String?
     var dictionary: NSDictionary?
+    var totalTweetsCount: Int?
+    var followersCount: Int?
+    var followingCount: Int?
+    var profileBackgroundImageURL: String?
     
     init(dictionary: NSDictionary) {
         self.dictionary = dictionary
@@ -23,6 +27,10 @@ class User: NSObject {
         profileImageURL = dictionary["profile_image_url"] as? String
         tagLine = dictionary["description"] as? String
         
+        totalTweetsCount = dictionary["statuses_count"] as? Int
+        followersCount = dictionary["followers_count"] as? Int
+        followingCount = dictionary["friends_count"] as? Int
+        profileBackgroundImageURL = dictionary["profile_background_image_url"] as? String
     }
     
     static let userDidLogoutNotification = "userDidLogout"

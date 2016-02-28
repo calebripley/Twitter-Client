@@ -8,8 +8,10 @@
 
 import UIKit
 
-var tweets: [Tweet]?
-var tweet: Tweet?
+
+protocol TweetCellDelegate {
+    func tweetCellProfileImageTap(sender: AnyObject?)
+}
 
 class TweetCell: UITableViewCell {
 
@@ -19,14 +21,43 @@ class TweetCell: UITableViewCell {
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var retweetCountLabel: UILabel!
     @IBOutlet weak var favoriteCountLabel: UILabel!
+    @IBOutlet weak var screenNameLabel: UILabel!
+    @IBOutlet weak var favoriteButton: UIButton!
+    @IBOutlet weak var retweetButton: UIButton!
+    @IBOutlet weak var replyButton: UIButton!
     
+    var tapRec: UITapGestureRecognizer = UITapGestureRecognizer()
+    var delegate: TweetCellDelegate?
+    
+    var tweet: Tweet! {
+        didSet {
+            self.userNameLabel.text = tweet.user!.name
+            self.tweetLabel.text = tweet.text
+            if let profileImageUrl = tweet.user?.profileImageURL {
+                self.profileImageView.setImageWithURL(NSURL(string: profileImageUrl)!)
+            }
+            self.screenNameLabel.text = "@\((tweet.user?.screenName)!)"
+            
+            //cell.timeStampLabel.text = String(tweet.createdAt)
+            let formatter = NSDateFormatter()
+            formatter.dateFormat = "EEE MMM d"
+            self.timeStampLabel.text = formatter.stringFromDate(tweet.createdAt!)
+            
+            self.favoriteCountLabel.text = "\(tweet.favoriteCount)"
+            self.retweetCountLabel.text = "\(tweet.retweetCount)"
+            
+            setRetweetImage(tweet.retweeted!)
+            setFavoriteImage(tweet.favorited!)
+            
+            self.tapRec.addTarget(self, action: "profileImageTapped:")
+            self.profileImageView.addGestureRecognizer(tapRec)
+        }
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
         //self.reloadTweet()
         userNameLabel.preferredMaxLayoutWidth = userNameLabel.frame.size.width
-        
     }
     
     override func layoutSubviews() {
@@ -41,40 +72,80 @@ class TweetCell: UITableViewCell {
     }
     
     @IBAction func onRetweet(sender: AnyObject) {
-        TwitterClient.sharedInstance.retweetWithCompletion((tweet!.tweetId!)) { (tweet, error) -> () in
-            if tweet != nil {
-                if tweet?.retweeted! == true {
-                    tweet?.retweeted! = false
-                    tweet?.retweetCount -= 1
-                } else {
-                    tweet?.retweeted! = true
-                    tweet?.retweetCount += 1
+        let retweetBtn = sender as! UIButton
+        let currentTweet = TWEETS![retweetBtn.tag]
+        let tweetId = TWEETS![retweetBtn.tag].tweetId
+        if !currentTweet.retweeted! {
+            TwitterClient.sharedInstance.retweetWithCompletion(tweetId!) { (tweet, error) -> () in
+                if error == nil {
+                    currentTweet.retweeted! = true
+                    currentTweet.retweetCount += 1
+                    self.retweetCountLabel.text = "\(currentTweet.retweetCount)"
+                    self.setRetweetImage(currentTweet.retweeted!)
                 }
-                self.updateCounts()
+            }
+        } else {
+            TwitterClient.sharedInstance.unRetweetWithCompletion(tweetId!) { (tweet, error) -> () in
+                if error == nil {
+                    currentTweet.retweeted! = false
+                    currentTweet.retweetCount -= 1
+                    self.retweetCountLabel.text = "\(currentTweet.retweetCount)"
+                    self.setRetweetImage(currentTweet.retweeted!)
+                }
             }
         }
     }
     
     @IBAction func onFavorite(sender: AnyObject) {
-        TwitterClient.sharedInstance.favoriteWithCompletion(tweet!.tweetId!) { (tweet, error) -> () in
-            if tweet != nil {
-                if tweet?.favorited! == true {
-                    tweet?.favorited! = false
-                    tweet?.favoriteCount -= 1
-                } else {
-                    tweet?.favorited! = true
-                    tweet?.favoriteCount += 1
+        let favBtn = sender as! UIButton
+        let currentTweet = TWEETS![favBtn.tag]
+        let tweetId = TWEETS![favBtn.tag].tweetId
+        if !currentTweet.favorited! {
+            TwitterClient.sharedInstance.favoriteWithCompletion(tweetId!) { (tweet, error) -> () in
+                if error == nil {
+                    currentTweet.favorited! = true
+                    currentTweet.favoriteCount += 1
+                    self.favoriteCountLabel.text = "\(currentTweet.favoriteCount)"
+                    self.setFavoriteImage(currentTweet.favorited!)
                 }
-                self.updateCounts()
+            }
+        } else {
+            TwitterClient.sharedInstance.favoriteWithCompletion(tweetId!) { (tweet, error) -> () in
+                if error == nil {
+                    currentTweet.favorited! = false
+                    currentTweet.favoriteCount -= 1
+                    self.favoriteCountLabel.text = "\(currentTweet.favoriteCount)"
+                    self.setFavoriteImage(currentTweet.favorited!)
+                }
             }
 
         }
     }
     
-    func updateCounts() {
-        favoriteCountLabel.text = String(tweet?.favoriteCount)
-        retweetCountLabel.text = String(tweet?.retweetCount)
+    @IBAction func onReply(sender: AnyObject) {
     }
+    
+    func setRetweetImage(status: Bool) {
+        if status {
+            self.retweetButton.setImage(UIImage(named: "retweet-action-on"), forState: UIControlState.Normal)
+        } else {
+            self.retweetButton.setImage(UIImage(named: "retweet-action-off"), forState: UIControlState.Normal)
+        }
+    }
+    
+    func setFavoriteImage(status: Bool) {
+        if status {
+            self.favoriteButton.setImage(UIImage(named: "like-action-on"), forState: UIControlState.Normal)
+        } else {
+            self.favoriteButton.setImage(UIImage(named: "like-action-off"), forState: UIControlState.Normal)
+        }
+    }
+    
+    func profileImageTapped(sender: AnyObject) {
+        delegate?.tweetCellProfileImageTap(sender)
+        //print("profile image tapped")
+    }
+
     
     /*func reloadTweet() {
         userNameLabel.text = String(tweet?.user?.name)
